@@ -1,0 +1,28 @@
+{
+  "name": "@wowts/string",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava index.spec.js",
+    "test:watch": "ava -w index.spec.js",
+    "prepublish": "tsc -p ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wowts/string.git"
+  },
+  "author": "Sidoine De Wispelaere",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wowts/string/issues"
+  },
+  "homepage": "https://github.com/wowts/string#readme",
+  "dependencies": {
+    "@wowts/coroutine": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.5.3",
+    "ava": "^0.22.0"
+  }
+}
