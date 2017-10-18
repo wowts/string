@@ -1,32 +1,107 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const coroutine_1 = require("@wowts/coroutine");
+var PatternContext;
+(function (PatternContext) {
+    PatternContext[PatternContext["Nothing"] = 0] = "Nothing";
+    PatternContext[PatternContext["Group"] = 1] = "Group";
+})(PatternContext || (PatternContext = {}));
+function peek(t) {
+    return t[t.length - 1];
+}
 function compilePattern(pattern, flags) {
-    pattern = pattern.replace(/%([a-z])/g, (pattern, p1) => {
-        switch (p1) {
-            case "a":
-                return "[A-Za-z]";
-            case "d":
-                return "\\d";
-            case "l":
-                return "[a-z]";
-            case "s":
-                return "\\s";
-            case "u":
-                return "[A-Z]";
-            case "w":
-                return "\\w";
-            case "x":
-                return "[A-Fa-f0-9]";
-            case "z":
-                return "\\0";
-            default:
-                return p1;
+    let context = [];
+    const tokens = pattern.split("");
+    let output = "";
+    while (tokens.length > 0) {
+        let token = tokens.shift();
+        if (token === '[') {
+            context.push(PatternContext.Group);
+            output += "[";
         }
-    });
-    pattern = pattern.replace(/([\.\]\)])-/g, "$1*?");
-    pattern = pattern.replace(/%(.)/g, "\\$1");
-    return new RegExp(pattern, flags);
+        else if (token === "]" && peek(context) === PatternContext.Group) {
+            context.pop();
+            output += "]";
+        }
+        else if (token === "%") {
+            token = tokens.shift();
+            switch (token) {
+                case "a":
+                    if (peek(context) === PatternContext.Group) {
+                        output += "A-Za-z";
+                    }
+                    else {
+                        output += "[A-Za-z]";
+                    }
+                    break;
+                case "d":
+                    output += "\\d";
+                    break;
+                case "l":
+                    if (peek(context) === PatternContext.Group) {
+                        output += "a-z";
+                    }
+                    else {
+                        output += "[a-z]";
+                    }
+                    break;
+                case "s":
+                    output += "\\s";
+                    break;
+                case "u":
+                    if (peek(context) === PatternContext.Group) {
+                        output += "A-Z";
+                    }
+                    else {
+                        output += "[A-Z]";
+                    }
+                    break;
+                case "w":
+                    output += "\\w";
+                    break;
+                case "x":
+                    if (peek(context) === PatternContext.Group) {
+                        output += "A-Fa-f0-9";
+                    }
+                    else {
+                        output += "[A-Fa-f0-9]";
+                    }
+                    break;
+                case "z":
+                    output += "\\0";
+                    break;
+                case "%":
+                    output += "%";
+                    break;
+                default:
+                    output += "\\" + token;
+                    break;
+            }
+        }
+        else if (token == "-") {
+            if (peek(context) !== PatternContext.Group) {
+                output += "*?";
+            }
+            else {
+                output += "-";
+            }
+        }
+        else if (token == "|") {
+            output += "\\|";
+        }
+        else if (token == ".") {
+            if (peek(context) === PatternContext.Group) {
+                output += "\\.";
+            }
+            else {
+                output += ".";
+            }
+        }
+        else {
+            output += token;
+        }
+    }
+    return new RegExp(output, flags);
 }
 function find(t, pattern, start) {
     if (start) {
@@ -54,7 +129,7 @@ function lower(t) {
 }
 exports.lower = lower;
 function sub(t, index, end) {
-    return t.substring(index, end);
+    return t.substring(index - 1, end);
 }
 exports.sub = sub;
 function len(t) {

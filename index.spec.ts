@@ -8,7 +8,12 @@ test("find with normal pattern", t => {
 
 test("find with normal pattern but don't find", t => {
     const result = find("bonjour", "zn");
-    t.is(result, undefined);
+    t.deepEqual(result, []);
+});
+
+test("find with complex pattern", t => {
+    const result = find("bonjour", "^[%a_][%w_]*[.:]?[%w_.]*");
+    t.deepEqual(result, [1, 8]);
 });
 
 test("find with pattern", t => {
