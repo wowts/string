@@ -81,7 +81,7 @@ export function gsub(text: string, pattern: string, substitute: string|((...args
 }
 
 export function match(text: string, pattern: string) {
-    return text.match(pattern); 
+    return text.match(compilePattern(pattern)); 
 }
 export function upper(text: string) {
     return text.toUpperCase();

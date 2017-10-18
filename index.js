@@ -83,7 +83,7 @@ function gsub(text, pattern, substitute) {
 }
 exports.gsub = gsub;
 function match(text, pattern) {
-    return text.match(pattern);
+    return text.match(compilePattern(pattern));
 }
 exports.match = match;
 function upper(text) {

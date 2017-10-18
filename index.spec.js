@@ -58,6 +58,23 @@ ava_1.test("format", t => {
     const result = index_1.format("un %s truc %d", "azz", 12);
     t.is(result, "un azz truc 12");
 });
+ava_1.test("match with line endings", t => {
+    const result = [];
+    const iterable = index_1.gmatch("first\r\nsecond", "[^\r\n]+");
+    if (iterable === undefined) {
+        t.fail();
+        return;
+    }
+    for (const m of iterable) {
+        result.push(m);
+    }
+    if (result === null) {
+        t.fail();
+        return;
+    }
+    t.is(result[0], "first");
+    t.is(result[1], "second");
+});
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);
 //     t.is(result, "a text ivth ovrds");

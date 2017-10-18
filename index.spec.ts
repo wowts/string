@@ -1,5 +1,5 @@
 import { test } from "ava";
-import { find, gmatch, gsub, format } from "./index";
+import { find, gmatch, gsub, format, match } from "./index";
 
 test("find with normal pattern", t => {
     const result = find("bonjour", "on");
@@ -65,6 +65,24 @@ test("format", t => {
     const result = format("un %s truc %d", "azz", 12);
     t.is(result, "un azz truc 12");
 });
+
+test("match with line endings", t => {
+    const result: string[] = [];
+    const iterable = gmatch("first\r\nsecond", "[^\r\n]+");
+    if (iterable === undefined) {
+        t.fail();
+        return;
+    }
+    for (const m of iterable) {
+        result.push(m);
+    }
+    if (result === null) {
+        t.fail();
+        return;
+    }
+    t.is(result[0], "first");
+    t.is(result[1], "second");
+})
 
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);
