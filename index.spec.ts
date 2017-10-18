@@ -66,7 +66,7 @@ test("format", t => {
     t.is(result, "un azz truc 12");
 });
 
-test("match with line endings", t => {
+test("gmatch with line endings", t => {
     const result: string[] = [];
     const iterable = gmatch("first\r\nsecond", "[^\r\n]+");
     if (iterable === undefined) {
@@ -83,6 +83,15 @@ test("match with line endings", t => {
     t.is(result[0], "first");
     t.is(result[1], "second");
 })
+
+test("match that removes spaces", t => {
+    const result = match(`deathknight="Death_Knight_Frost_T19P"`, "^%s*(.-)%s*$");
+    if (result === null) {
+        t.fail();
+        return;
+    }
+    t.is(result[0], `deathknight="Death_Knight_Frost_T19P"`);
+});
 
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);

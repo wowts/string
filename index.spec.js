@@ -58,7 +58,7 @@ ava_1.test("format", t => {
     const result = index_1.format("un %s truc %d", "azz", 12);
     t.is(result, "un azz truc 12");
 });
-ava_1.test("match with line endings", t => {
+ava_1.test("gmatch with line endings", t => {
     const result = [];
     const iterable = index_1.gmatch("first\r\nsecond", "[^\r\n]+");
     if (iterable === undefined) {
@@ -74,6 +74,14 @@ ava_1.test("match with line endings", t => {
     }
     t.is(result[0], "first");
     t.is(result[1], "second");
+});
+ava_1.test("match that removes spaces", t => {
+    const result = index_1.match(`deathknight="Death_Knight_Frost_T19P"`, "^%s*(.-)%s*$");
+    if (result === null) {
+        t.fail();
+        return;
+    }
+    t.is(result[0], `deathknight="Death_Knight_Frost_T19P"`);
 });
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);

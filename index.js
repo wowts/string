@@ -24,7 +24,7 @@ function compilePattern(pattern, flags) {
                 return p1;
         }
     });
-    pattern = pattern.replace(/([\.\]\)])-/g, "$1?");
+    pattern = pattern.replace(/([\.\]\)])-/g, "$1*?");
     pattern = pattern.replace(/%(.)/g, "\\$1");
     return new RegExp(pattern, flags);
 }
@@ -35,10 +35,10 @@ function find(t, pattern, start) {
     const regex = compilePattern(pattern);
     let pos = t.search(regex);
     if (pos == -1)
-        return undefined;
+        return [];
     const m = t.match(regex);
     if (!m)
-        return undefined;
+        return [];
     const length = m[0].length;
     if (start) {
         pos += start;
@@ -83,7 +83,11 @@ function gsub(text, pattern, substitute) {
 }
 exports.gsub = gsub;
 function match(text, pattern) {
-    return text.match(compilePattern(pattern));
+    const result = text.match(compilePattern(pattern));
+    if (result && result.length > 1) {
+        return result.slice(1);
+    }
+    return result;
 }
 exports.match = match;
 function upper(text) {

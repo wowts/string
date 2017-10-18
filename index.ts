@@ -23,21 +23,21 @@ function compilePattern(pattern: string, flags?: string) {
                 return p1;
         }
     });
-    pattern = pattern.replace(/([\.\]\)])-/g, "$1?");
+    pattern = pattern.replace(/([\.\]\)])-/g, "$1*?");
     pattern = pattern.replace(/%(.)/g, "\\$1");
     return new RegExp(pattern, flags);
 }
 
-export function find(t: string, pattern: string, start?:number):number[]|undefined {
+export function find(t: string, pattern: string, start?:number):number[] {
     if (start) {
         t = t.substring(start);
     }
     const regex = compilePattern(pattern)
     
     let pos = t.search(regex);
-    if (pos == -1) return undefined;
+    if (pos == -1) return [];
     const m = t.match(regex);
-    if (!m) return undefined;
+    if (!m) return [];
     const length = m[0].length;
     if (start) {
         pos += start;
@@ -81,7 +81,11 @@ export function gsub(text: string, pattern: string, substitute: string|((...args
 }
 
 export function match(text: string, pattern: string) {
-    return text.match(compilePattern(pattern)); 
+    const result = text.match(compilePattern(pattern)); 
+    if (result && result.length > 1) {
+        return result.slice(1);
+    }
+    return result;
 }
 export function upper(text: string) {
     return text.toUpperCase();
