@@ -4,7 +4,7 @@ const ava_1 = require("ava");
 const index_1 = require("./index");
 ava_1.test("find with normal pattern", t => {
     const result = index_1.find("bonjour", "on");
-    t.deepEqual(result, [2, 4]);
+    t.deepEqual(result, [2, 3]);
 });
 ava_1.test("find with normal pattern but don't find", t => {
     const result = index_1.find("bonjour", "zn");
@@ -12,11 +12,15 @@ ava_1.test("find with normal pattern but don't find", t => {
 });
 ava_1.test("find with complex pattern", t => {
     const result = index_1.find("bonjour", "^[%a_][%w_]*[.:]?[%w_.]*");
-    t.deepEqual(result, [1, 8]);
+    t.deepEqual(result, [1, 7]);
+});
+ava_1.test("find with complex pattern, no result", t => {
+    const result = index_1.find(",test", "^[%a_][%w_]*[.:]?[%w_.]*");
+    t.deepEqual(result, []);
 });
 ava_1.test("find with pattern", t => {
     const result = index_1.find("bonjour", "o%w");
-    t.deepEqual(result, [2, 4]);
+    t.deepEqual(result, [2, 3]);
 });
 ava_1.test("gmatch", t => {
     const result = index_1.gmatch("a text with words", "%w+");
@@ -61,6 +65,10 @@ ava_1.test.failing("gsub with function", t => {
 ava_1.test("format", t => {
     const result = index_1.format("un %s truc %d", "azz", 12);
     t.is(result, "un azz truc 12");
+});
+ava_1.test("format with %%", t => {
+    const result = index_1.format("un %s %%w truc %d", "azz", 12);
+    t.is(result, "un azz %w truc 12");
 });
 ava_1.test("gmatch with line endings", t => {
     const result = [];

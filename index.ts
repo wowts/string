@@ -97,6 +97,9 @@ function compilePattern(pattern: string, flags?: string) {
                 output += ".";
             }
         }
+        else if (token === "\\") {
+            output += "\\\\";
+        }
         else {
             output += token;
         }
@@ -106,7 +109,7 @@ function compilePattern(pattern: string, flags?: string) {
 
 export function find(t: string, pattern: string, start?:number):number[] {
     if (start) {
-        t = t.substring(start);
+        t = t.substring(start - 1);
     }
     const regex = compilePattern(pattern)
     
@@ -121,7 +124,7 @@ export function find(t: string, pattern: string, start?:number):number[] {
     else {
         pos++;
     }
-    return [pos, pos + length];
+    return [pos, pos + length - 1];
 }
 
 export function lower(t: string) {
@@ -138,7 +141,7 @@ export function len(t: string) {
 
 export function format(format: string, ...values:any[]) {
     let index = 0;
-    return format.replace(/%\w/g, () => values[index++]); 
+    return format.replace(/%(.)/g, (y,x) => x === '%' ? '%' : values[index++]); 
 }
 
 export function gmatch(text: string, pattern: string) {

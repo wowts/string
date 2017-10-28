@@ -97,6 +97,9 @@ function compilePattern(pattern, flags) {
                 output += ".";
             }
         }
+        else if (token === "\\") {
+            output += "\\\\";
+        }
         else {
             output += token;
         }
@@ -105,7 +108,7 @@ function compilePattern(pattern, flags) {
 }
 function find(t, pattern, start) {
     if (start) {
-        t = t.substring(start);
+        t = t.substring(start - 1);
     }
     const regex = compilePattern(pattern);
     let pos = t.search(regex);
@@ -121,7 +124,7 @@ function find(t, pattern, start) {
     else {
         pos++;
     }
-    return [pos, pos + length];
+    return [pos, pos + length - 1];
 }
 exports.find = find;
 function lower(t) {
@@ -138,7 +141,7 @@ function len(t) {
 exports.len = len;
 function format(format, ...values) {
     let index = 0;
-    return format.replace(/%\w/g, () => values[index++]);
+    return format.replace(/%(.)/g, (y, x) => x === '%' ? '%' : values[index++]);
 }
 exports.format = format;
 function gmatch(text, pattern) {

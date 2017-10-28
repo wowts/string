@@ -3,7 +3,7 @@ import { find, gmatch, gsub, format, match } from "./index";
 
 test("find with normal pattern", t => {
     const result = find("bonjour", "on");
-    t.deepEqual(result, [2, 4]);
+    t.deepEqual(result, [2, 3]);
 });
 
 test("find with normal pattern but don't find", t => {
@@ -13,12 +13,18 @@ test("find with normal pattern but don't find", t => {
 
 test("find with complex pattern", t => {
     const result = find("bonjour", "^[%a_][%w_]*[.:]?[%w_.]*");
-    t.deepEqual(result, [1, 8]);
+    t.deepEqual(result, [1, 7]);
+});
+
+
+test("find with complex pattern, no result", t => {
+    const result = find(",test", "^[%a_][%w_]*[.:]?[%w_.]*");
+    t.deepEqual(result, []);
 });
 
 test("find with pattern", t => {
     const result = find("bonjour", "o%w");
-    t.deepEqual(result, [2, 4]);
+    t.deepEqual(result, [2, 3]);
 });
 
 test("gmatch", t => {
@@ -71,6 +77,11 @@ test("format", t => {
     t.is(result, "un azz truc 12");
 });
 
+test("format with %%", t => {
+    const result = format("un %s %%w truc %d", "azz", 12);
+    t.is(result, "un azz %w truc 12");
+})
+
 test("gmatch with line endings", t => {
     const result: string[] = [];
     const iterable = gmatch("first\r\nsecond", "[^\r\n]+");
@@ -97,6 +108,7 @@ test("match that removes spaces", t => {
     }
     t.is(result[0], `deathknight="Death_Knight_Frost_T19P"`);
 });
+
 
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);
