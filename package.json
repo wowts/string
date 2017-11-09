@@ -6,7 +6,8 @@
   "scripts": {
     "test": "ava index.spec.js",
     "test:watch": "ava -w index.spec.js",
-    "prepublish": "tsc -p ."
+    "prepare": "tsc",
+    "watch": "tsc -w"
   },
   "repository": {
     "type": "git",

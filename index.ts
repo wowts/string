@@ -161,6 +161,7 @@ export function gsub(text: string, pattern: string, substitute: string|((...args
 
 export function match(text: string, pattern: string) {
     const result = text.match(compilePattern(pattern)); 
+    if (!result) return [];
     if (result && result.length > 1) {
         return result.slice(1);
     }

@@ -109,6 +109,10 @@ test("match that removes spaces", t => {
     t.is(result[0], `deathknight="Death_Knight_Frost_T19P"`);
 });
 
+test("match that doesn't match", t => {
+    const result = match("actions", `^actions%.([%w_]+)`);
+    t.is(result.length, 0);
+});
 
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);
