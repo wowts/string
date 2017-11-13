@@ -144,7 +144,7 @@ export function format(format: string, ...values:any[]) {
     return format.replace(/%(.)/g, (y,x) => x === '%' ? '%' : values[index++]); 
 }
 
-export function gmatch(text: string, pattern: string) {
+export function gmatch(text: string, pattern: string): LuaIterable<string> | undefined {
     const result = text.match(compilePattern(pattern, "g"));
     if (!result) return undefined;
     return makeLuaIterable(result);
