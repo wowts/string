@@ -1,6 +1,6 @@
 {
   "name": "@wowts/string",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/wowts/string#readme",
   "dependencies": {
-    "@wowts/coroutine": "^1.0.0"
+    "@wowts/coroutine": "^1.1.0"
   },
   "devDependencies": {
-    "typescript": "^2.5.3",
+    "typescript": "^3.7.4",
     "ava": "^0.22.0"
   }
 }

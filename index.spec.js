@@ -102,5 +102,5 @@ ava_1.test("match that doesn't match", t => {
 // test("gsub with function", t => {
 //     const result = gsub("a text with words", "w(%w)", (s, t) => t + s);
 //     t.is(result, "a text ivth ovrds");
-// }); 
+// });
 //# sourceMappingURL=index.spec.js.map

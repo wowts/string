@@ -147,7 +147,7 @@ exports.format = format;
 function gmatch(text, pattern) {
     const result = text.match(compilePattern(pattern, "g"));
     if (!result)
-        return undefined;
+        return coroutine_1.makeEmptyLuaIterable();
     return coroutine_1.makeLuaIterable(result);
 }
 exports.gmatch = gmatch;

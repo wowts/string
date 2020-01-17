@@ -1,4 +1,4 @@
-import { makeLuaIterable, LuaIterable } from "@wowts/coroutine";
+import { makeLuaIterable, LuaIterable, makeEmptyLuaIterable } from "@wowts/coroutine";
 
 enum PatternContext {
     Nothing,
@@ -144,9 +144,9 @@ export function format(format: string, ...values:any[]) {
     return format.replace(/%(.)/g, (y,x) => x === '%' ? '%' : values[index++]); 
 }
 
-export function gmatch(text: string, pattern: string): LuaIterable<string> | undefined {
+export function gmatch(text: string, pattern: string): LuaIterable<string> {
     const result = text.match(compilePattern(pattern, "g"));
-    if (!result) return undefined;
+    if (!result) return makeEmptyLuaIterable<string>();
     return makeLuaIterable(result);
 }
 

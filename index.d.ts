@@ -4,7 +4,7 @@ export declare function lower(t: string): string;
 export declare function sub(t: string, index: number, end?: number): string;
 export declare function len(t: string): number;
 export declare function format(format: string, ...values: any[]): string;
-export declare function gmatch(text: string, pattern: string): LuaIterable<string> | undefined;
+export declare function gmatch(text: string, pattern: string): LuaIterable<string>;
 export declare function gsub(text: string, pattern: string, substitute: string | ((...args: string[]) => string)): string;
 export declare function match(text: string, pattern: string): string[];
 export declare function upper(text: string): string;
