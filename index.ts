@@ -2,7 +2,7 @@ import { makeLuaIterable, LuaIterable, makeEmptyLuaIterable } from "@wowts/corou
 
 enum PatternContext {
     Nothing,
-    Group
+    Group,
 }
 
 function peek<T>(t: T[]) {
@@ -15,45 +15,40 @@ function compilePattern(pattern: string, flags?: string) {
     let output = "";
     while (tokens.length > 0) {
         let token = tokens.shift();
-        if (token === '[') {
+        if (token === "[") {
             context.push(PatternContext.Group);
             output += "[";
-        }
-        else if (token === "]" && peek(context) === PatternContext.Group) {
+        } else if (token === "]" && peek(context) === PatternContext.Group) {
             context.pop();
             output += "]";
-        }
-        else if (token === "%") {
+        } else if (token === "%") {
             token = tokens.shift();
             switch (token) {
                 case "a":
                     if (peek(context) === PatternContext.Group) {
                         output += "A-Za-z";
+                    } else {
+                        output += "[A-Za-z]";
                     }
-                    else {
-                        output += "[A-Za-z]";    
-                    }
-                    break;                    
+                    break;
                 case "d":
                     output += "\\d";
                     break;
                 case "l":
                     if (peek(context) === PatternContext.Group) {
                         output += "a-z";
+                    } else {
+                        output += "[a-z]";
                     }
-                    else {
-                        output += "[a-z]";    
-                    }
-                    break;          
+                    break;
                 case "s":
-                    output +=  "\\s";
+                    output += "\\s";
                     break;
                 case "u":
                     if (peek(context) === PatternContext.Group) {
                         output += "A-Z";
-                    }
-                    else {
-                        output += "[A-Z]";    
+                    } else {
+                        output += "[A-Z]";
                     }
                     break;
                 case "w":
@@ -62,13 +57,12 @@ function compilePattern(pattern: string, flags?: string) {
                 case "x":
                     if (peek(context) === PatternContext.Group) {
                         output += "A-Fa-f0-9";
-                    }
-                    else {
-                        output += "[A-Fa-f0-9]";    
+                    } else {
+                        output += "[A-Fa-f0-9]";
                     }
                     break;
                 case "z":
-                    output +=  "\\0";
+                    output += "\\0";
                     break;
                 case "%":
                     output += "%";
@@ -77,42 +71,35 @@ function compilePattern(pattern: string, flags?: string) {
                     output += "\\" + token;
                     break;
             }
-        }
-        else if (token == "-") {
+        } else if (token == "-") {
             if (peek(context) !== PatternContext.Group) {
                 output += "*?";
-            }
-            else {
+            } else {
                 output += "-";
             }
-        }
-        else if (token == "|") {
+        } else if (token == "|") {
             output += "\\|";
-        }
-        else if (token == ".") {
+        } else if (token == ".") {
             if (peek(context) === PatternContext.Group) {
                 output += "\\.";
-            }
-            else {
+            } else {
                 output += ".";
             }
-        }
-        else if (token === "\\") {
+        } else if (token === "\\") {
             output += "\\\\";
-        }
-        else {
+        } else {
             output += token;
         }
     }
     return new RegExp(output, flags);
 }
 
-export function find(t: string, pattern: string, start?:number):number[] {
+export function find(t: string, pattern: string, start?: number): number[] {
     if (start) {
         t = t.substring(start - 1);
     }
-    const regex = compilePattern(pattern)
-    
+    const regex = compilePattern(pattern);
+
     let pos = t.search(regex);
     if (pos == -1) return [];
     const m = t.match(regex);
@@ -120,8 +107,7 @@ export function find(t: string, pattern: string, start?:number):number[] {
     const length = m[0].length;
     if (start) {
         pos += start;
-    }
-    else {
+    } else {
         pos++;
     }
     return [pos, pos + length - 1];
@@ -131,7 +117,8 @@ export function lower(t: string) {
     return t.toLowerCase();
 }
 
-export function sub(t: string, index: number, end?:number) {
+export function sub(t: string, index: number, end?: number) {
+    if (end && end < 0) end = t.length + end + 1;
     return t.substring(index - 1, end);
 }
 
@@ -139,9 +126,11 @@ export function len(t: string) {
     return t.length;
 }
 
-export function format(format: string, ...values:any[]) {
+export function format(format: string, ...values: any[]) {
     let index = 0;
-    return format.replace(/%(.)/g, (y,x) => x === '%' ? '%' : values[index++]); 
+    return format.replace(/%(.)/g, (y, x) =>
+        x === "%" ? "%" : values[index++]
+    );
 }
 
 export function gmatch(text: string, pattern: string): LuaIterable<string> {
@@ -150,17 +139,26 @@ export function gmatch(text: string, pattern: string): LuaIterable<string> {
     return makeLuaIterable(result);
 }
 
-export function gsub(text: string, pattern: string, substitute: string|((...args:string[]) => string)) {
+export function gsub(
+    text: string,
+    pattern: string,
+    substitute: string | ((...args: string[]) => string)
+) {
     const regex = compilePattern(pattern, "g");
-     if (typeof(substitute) === "string") {
-         const sub = substitute.replace(/\$/g, "$$").replace(/%0/g, "$$&").replace(/%/g, "$");
-         return text.replace(regex, sub);
-     }
-    return text.replace(regex, (pattern:string, ...args:string[]) => substitute(...args));
+    if (typeof substitute === "string") {
+        const sub = substitute
+            .replace(/\$/g, "$$")
+            .replace(/%0/g, "$$&")
+            .replace(/%/g, "$");
+        return text.replace(regex, sub);
+    }
+    return text.replace(regex, (pattern: string, ...args: string[]) =>
+        substitute(...args)
+    );
 }
 
 export function match(text: string, pattern: string) {
-    const result = text.match(compilePattern(pattern)); 
+    const result = text.match(compilePattern(pattern));
     if (!result) return [];
     if (result && result.length > 1) {
         return result.slice(1);
